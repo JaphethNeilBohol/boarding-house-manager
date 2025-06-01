@@ -1,0 +1,15 @@
+{% extends 'boarders/base.html' %}
+
+{% block title %} Add Boarder{% endblock %}
+
+{% block content %}
+<h2>Add New Boarder</h2>
+<form method="post">
+  {% csrf_token %}
+  <div class="mb-3">
+    {{ form.as_p }}
+  </div>
+  <button type="submit" class="btn btn-success">Save</button>
+  <a href="{% url 'boarder-list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

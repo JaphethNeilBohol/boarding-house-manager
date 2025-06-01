@@ -1,0 +1,25 @@
+{% extends 'boarders/base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">Login</h2>
+
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                Invalid username or password.
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

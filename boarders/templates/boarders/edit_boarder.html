@@ -1,0 +1,15 @@
+{% extends 'boarders/base.html' %}
+
+{% block title %}Edit Borders{% endblocks %}
+
+{% block content %}
+<h2>Edit Boarder</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        {{ form.as_p }}
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a href="{% url 'boarder-list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
