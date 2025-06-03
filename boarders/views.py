@@ -6,13 +6,18 @@ from django.shortcuts import redirect
 from django.views.generic import DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
+
 
 # Create your views here.
+@never_cache
 @login_required
 def boarder_list(request):
     boarders = Boarder.objects.all()
     return render(request, 'boarders/boarder_list.html', {'boarders': boarders})
 
+@never_cache
 @login_required
 def add_boarder(request):
     if request.method == 'POST':
@@ -24,6 +29,7 @@ def add_boarder(request):
         form = BoarderForm()
     return render(request, 'boarders/add_boarder.html', {'form': form})
 
+@never_cache
 @login_required
 def edit_boarder(request, pk):
     boarder = get_object_or_404(Boarder, pk=pk)
@@ -38,7 +44,7 @@ def edit_boarder(request, pk):
 
     return render(request, 'boarders/edit_boarder.html', {'form': form})
 
-
+@method_decorator(never_cache, name='dispatch')
 class BoarderDeleteView(LoginRequiredMixin, DeleteView):
     model = Boarder
     template_name = 'boarders/delete_boarder.html'
