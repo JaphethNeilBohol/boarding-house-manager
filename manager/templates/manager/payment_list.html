@@ -1,0 +1,80 @@
+{% extends 'manager/base.html' %}
+{% block title %}Payments - Boarding House Manager{% endblock %}
+
+{% block content %}
+<h2>Payment Records</h2>
+
+<form method="get" class="row g-2 mb-3">
+
+    <div class="col-md-3">
+        <select name="tenant" class="form-control">
+            <option value="">Tenant</option>
+            {% for t in tenants %}
+                <option value="{{ t.id }}" {% if tenant_query == t.id|stringformat:"s" %}selected{% endif %}>
+                    {{ t.full_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="month" class="form-control">
+            <option value="">Month</option>
+            {% for m in months %}
+                <option value="{{ m }}" {% if month_query == m %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="year" class="form-control">
+            <option value="">Year</option>
+            {% for y in years %}
+                <option value="{{ y }}" {% if year_query == y|stringformat:"s" %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Search</button>
+    </div>
+    <div class="col-md-3">
+        <a href="{% url 'payment_add' %}" class="btn btn-success w-100">Add Payment</a>
+    </div>
+</form>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Tenant</th>
+            <th>Month</th>
+            <th>Year</th>
+            <th>Rent</th>
+            <th>Electricity</th>
+            <th>Water</th>
+            <th>Paid On</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for payment in payments %}
+        <tr>
+            <td>{{ payment.tenant.full_name }}</td>
+            <td>{{ payment.month }}</td>
+            <td>{{ payment.year }}</td>
+            <td>₱{{ payment.rent_amount }}</td>
+            <td>₱{{ payment.electricity_bill }}</td>
+            <td>₱{{ payment.water_bill }}</td>
+            <td>{{ payment.paid_on }}</td>
+            <td>
+                <a href="{% url 'payment_edit' payment.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8">No payment records found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

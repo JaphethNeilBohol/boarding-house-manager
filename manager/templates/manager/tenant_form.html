@@ -1,0 +1,26 @@
+{% extends 'manager/base.html' %}
+{% block title %}{{ action }} Tenant{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm p-4 mb-4">
+    <h2 class="mb-4">{{ action }} Tenant</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="form-text text-danger">
+                        {{ field.errors|striptags }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'tenant_list' %}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">{{ action }}</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

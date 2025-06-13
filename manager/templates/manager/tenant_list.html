@@ -1,0 +1,152 @@
+{% extends 'manager/base.html' %}
+{% load static %}
+{% block title %}Tenants{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm p-4 mb-4">
+    <h2 class="mb-4">Tenant List</h2>
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{% url 'tenant_add' %}" class="btn btn-success" style="float: right">Add Tenant</a>
+    </div>
+    <form method="get" class="mb-3">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <input type="text" name="q" placeholder="Search by name" value="{{ query }}" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select">
+                    <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                    <option value="removed" {% if status_filter == 'removed' %}selected{% endif %}>Removed</option>
+                    <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="sort" class="form-select">
+                    <option value="alpha" {% if sort == 'alpha' %}selected{% endif %}>Alphabetical</option>
+                    <option value="recent" {% if sort == 'recent' %}selected{% endif %}>Most Recent</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Room</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tenant in tenants %}
+            <tr>
+                <td>
+                    <a href="#" class="text-decoration-none text-primary view-tenant"
+                       data-bs-toggle="modal" data-bs-target="#tenantModal"
+                       data-name="{{ tenant.full_name }}"
+                       data-age="{{ tenant.age }}"
+                       data-gender="{{ tenant.get_gender_display }}"
+                       data-room="{% if tenant.room %}{{ tenant.room.room_number }}{% else %}Unassigned{% endif %}"
+                       data-phone="{{ tenant.phone_number }}"
+                       data-emergency="{{ tenant.emergency_contact }}"
+                       data-address="{{ tenant.address }}"
+                       data-idtype="{{ tenant.id_type }}"
+                       data-idnumber="{{ tenant.id_number }}"
+                       data-movein="{{ tenant.move_in_date }}"
+                       data-moveout="{{ tenant.move_out_date|default:'N/A' }}"
+                       data-image-url="{% if tenant.id_photo %}{{ tenant.id_photo.url }}{% else %}{% endif %}">
+                       {{ tenant.full_name }}
+                    </a>
+                </td>
+                <td>
+                    {% if tenant.room %}
+                        {{ tenant.room.room_number }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>{{ tenant.phone_number }}</td>
+                <td>
+                    {% if tenant.is_active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Removed</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'edit_tenant' tenant.id %}" class="btn btn-sm btn-warning me-1">Edit</a>
+                    <a href="{% url 'remove_tenant' tenant.id %}" class="btn btn-sm btn-danger"
+                    onclick="return confirm('Are you sure you want to delete this tenant?');">
+                    Delete
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No tenants found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Tenant Modal -->
+<div class="modal fade" id="tenantModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalName"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="modalImage" src="" alt="ID Image" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+        <ul class="list-group text-start">
+          <li class="list-group-item"><strong>Age:</strong> <span id="modalAge"></span></li>
+          <li class="list-group-item"><strong>Gender:</strong> <span id="modalGender"></span></li>
+          <li class="list-group-item"><strong>Room:</strong> <span id="modalRoom"></span></li>
+          <li class="list-group-item"><strong>Phone:</strong> <span id="modalPhone"></span></li>
+          <li class="list-group-item"><strong>Emergency:</strong> <span id="modalEmergency"></span></li>
+          <li class="list-group-item"><strong>Address:</strong> <span id="modalAddress"></span></li>
+          <li class="list-group-item"><strong>ID Type:</strong> <span id="modalIDType"></span></li>
+          <li class="list-group-item"><strong>ID Number:</strong> <span id="modalIDNumber"></span></li>
+          <li class="list-group-item"><strong>Move-In:</strong> <span id="modalMoveIn"></span></li>
+          <li class="list-group-item"><strong>Move-Out:</strong> <span id="modalMoveOut"></span></li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.view-tenant').forEach(el => {
+    el.addEventListener('click', function () {
+      document.getElementById('modalName').textContent = this.dataset.name;
+      document.getElementById('modalAge').textContent = this.dataset.age;
+      document.getElementById('modalGender').textContent = this.dataset.gender;
+      document.getElementById('modalRoom').textContent = this.dataset.room;
+      document.getElementById('modalPhone').textContent = this.dataset.phone;
+      document.getElementById('modalEmergency').textContent = this.dataset.emergency;
+      document.getElementById('modalAddress').textContent = this.dataset.address;
+      document.getElementById('modalIDType').textContent = this.dataset.idtype;
+      document.getElementById('modalIDNumber').textContent = this.dataset.idnumber;
+      document.getElementById('modalMoveIn').textContent = this.dataset.movein;
+      document.getElementById('modalMoveOut').textContent = this.dataset.moveout;
+
+      const img = document.getElementById('modalImage');
+      if (this.dataset.imageUrl && this.dataset.imageUrl.trim() !== "") {
+        img.src = this.dataset.imageUrl;
+      } else {
+        img.src = "{% static 'img/default_id_placeholder.png' %}";
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

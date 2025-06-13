@@ -1,0 +1,49 @@
+{% extends 'manager/base.html' %}
+{% block title %}History Log - Boarding House Manager{% endblock %}
+
+{% block content %}
+<h2>System History Log</h2>
+
+<form method="get" class="row mb-3">
+    <div class="col-md-3 mb-2">
+        <input type="text" name="q" value="{{ search }}" class="form-control" placeholder="Search user, action, or tenant">
+    </div>
+    <div class="col-md-2 mb-2">
+        <input type="date" name="start" value="{{ start_date }}" class="form-control" placeholder="Start date">
+    </div>
+    <div class="col-md-2 mb-2">
+        <input type="date" name="end" value="{{ end_date }}" class="form-control" placeholder="End date">
+    </div>
+    <div class="col-md-3 mb-2">
+        <button type="submit" class="btn btn-dark w-100">Search / Filter</button>
+    </div>
+    <div class="col-md-2 mb-2">
+        <button type="submit" name="export" value="csv" class="btn btn-success w-100">Export CSV</button>
+    </div>
+</form>
+
+<table class="table table-bordered table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>User</th>
+            <th>Action</th>
+            <th>Tenant</th>
+            <th>Note</th>
+            <th>Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.user.username }}</td>
+            <td>{{ log.action }}</td>
+            <td>{{ log.tenant_name }}</td>
+            <td>{{ log.note }}</td>
+            <td>{{ log.timestamp }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center">No history found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

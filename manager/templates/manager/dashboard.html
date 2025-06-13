@@ -1,0 +1,66 @@
+{% extends 'manager/base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2>Dashboard</h2>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Active Tenants</h5>
+                <p class="card-text fs-4">{{ active_tenants }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-secondary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Rooms</h5>
+                <p class="card-text fs-4">{{ total_rooms }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <a href="{% url 'room_list' %}" class="text-decoration-none">
+            <div class="card bg-warning text-dark mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Occupied Rooms</h5>
+                    <p class="card-text fs-4">{{ occupied_rooms }}</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card bg-light text-dark mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Vacant Rooms</h5>
+                <p class="card-text fs-4">{{ vacant_rooms }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mt-5">Recent Activity</h4>
+<table class="table table-bordered table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>User</th><th>Action</th><th>Tenant</th><th>Note</th><th>Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in recent_logs %}
+        <tr>
+            <td>{{ log.user.username }}</td>
+            <td>{{ log.action }}</td>
+            <td>{{ log.tenant_name }}</td>
+            <td>{{ log.note }}</td>
+            <td>{{ log.timestamp|date:"M d, Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

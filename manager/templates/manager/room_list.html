@@ -1,0 +1,49 @@
+{% extends 'manager/base.html' %}
+{% block title %}Rooms - Boarding House Manager{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Room Overview</h2>
+
+<!-- Occupied Rooms Section -->
+<h4>Occupied Rooms</h4>
+<div class="row">
+    {% for room, tenants in occupied_rooms.items %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card border-success shadow-sm">
+                <div class="card-header bg-success text-white">
+                    {{ room.room_number }}
+                </div>
+                <div class="card-body">
+                    {% for tenant in tenants %}
+                        <p class="mb-1"><strong>Name:</strong> {{ tenant.full_name }}</p>
+                        <p class="mb-1"><strong>Age:</strong> {{ tenant.age }}</p>
+                        <p class="mb-1"><strong>Gender:</strong> {{ tenant.gender }}</p>
+                        {% if not forloop.last %}<hr>{% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-muted">No occupied rooms found.</p>
+    {% endfor %}
+</div>
+
+<hr>
+
+<!-- Vacant Rooms Section -->
+<h4>Vacant Rooms</h4>
+<div class="row">
+    {% for room in vacant_rooms %}
+        <div class="col-md-3 mb-4">
+            <div class="card border-secondary shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-muted">{{ room.room_number }}</h5>
+                    <p class="card-text text-muted">Vacant</p>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-muted">No vacant rooms available.</p>
+    {% endfor %}
+</div>
+{% endblock %}
